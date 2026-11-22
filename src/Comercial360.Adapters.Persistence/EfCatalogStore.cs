@@ -22,10 +22,14 @@ public sealed class EfCatalogStore(Comercial360DbContext dbContext) : ICatalogSt
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(customer =>
-                customer.Name.Contains(search) ||
-                customer.DocumentNumber.Contains(search) ||
-                customer.DocumentType.Contains(search));
+            var searchTerms = search.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var term in searchTerms)
+            {
+                query = query.Where(customer =>
+                    customer.Name.Contains(term) ||
+                    customer.DocumentNumber.Contains(term) ||
+                    customer.DocumentType.Contains(term));
+            }
         }
 
         return await query
