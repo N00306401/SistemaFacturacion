@@ -76,7 +76,7 @@ public sealed class SaleRegistrationService(
             }
 
             var netAmount = decimal.Round(item.Quantity * product.UnitNetPrice, 2, MidpointRounding.AwayFromZero);
-            var taxAmount = decimal.Round(netAmount * taxRatePercent.Value / 100m, 2, MidpointRounding.AwayFromZero);
+            var taxAmount = CalculateTax(netAmount, taxRatePercent.Value);
             saleLines.Add(SaleLine.Create(item.ProductId, product.Description, item.Quantity, product.UnitNetPrice, taxAmount));
         }
 
@@ -103,6 +103,9 @@ public sealed class SaleRegistrationService(
             requestHash,
             cancellationToken);
     }
+
+    private static decimal CalculateTax(decimal netAmount, decimal taxRatePercent) =>
+        decimal.Round(netAmount * taxRatePercent / 100m, 2, MidpointRounding.AwayFromZero);
 
     private static string ComputeRequestHash(
         Guid customerId,
